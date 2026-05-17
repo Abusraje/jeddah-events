@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Local env files (keep .env.example committed, hide actual .env)
+# Note: this project's .env only contains Supabase publishable key + Google Maps key
+# (both safe to expose with RLS/domain restrictions), but gitignoring is best practice.
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db
+
+# Misc
+*.log
+.cache/
+.vite/
