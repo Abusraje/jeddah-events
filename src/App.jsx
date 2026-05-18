@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route, Link } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
 import Navbar from './components/Navbar'
@@ -36,18 +36,18 @@ function Layout({ children }) {
             <div>
               <h4 className="font-semibold mb-3 text-sm">Explore</h4>
               <div className="space-y-1.5 text-sm text-white/60">
-                <a href="/events" className="block hover:text-white transition-colors">Events</a>
-                <a href="/cafes" className="block hover:text-white transition-colors">Cafes</a>
-                <a href="/cinema" className="block hover:text-white transition-colors">Cinema</a>
-                <a href="/social" className="block hover:text-white transition-colors">Social</a>
+                <Link to="/events" className="block hover:text-white transition-colors">Events</Link>
+                <Link to="/cafes" className="block hover:text-white transition-colors">Cafes</Link>
+                <Link to="/cinema" className="block hover:text-white transition-colors">Cinema</Link>
+                <Link to="/social" className="block hover:text-white transition-colors">Social</Link>
               </div>
             </div>
             <div>
               <h4 className="font-semibold mb-3 text-sm">Account</h4>
               <div className="space-y-1.5 text-sm text-white/60">
-                <a href="/login" className="block hover:text-white transition-colors">Sign In</a>
-                <a href="/register" className="block hover:text-white transition-colors">Register</a>
-                <a href="/submit" className="block hover:text-white transition-colors">Submit Event</a>
+                <Link to="/login" className="block hover:text-white transition-colors">Sign In</Link>
+                <Link to="/register" className="block hover:text-white transition-colors">Register</Link>
+                <Link to="/submit" className="block hover:text-white transition-colors">Submit Event</Link>
               </div>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function App() {
                   <div className="text-7xl mb-4">🌊</div>
                   <h1 className="text-4xl font-bold text-gray-900 mb-2">404</h1>
                   <p className="text-gray-500 mb-6">This page doesn't exist</p>
-                  <a href="/" className="btn-primary">Back to Home</a>
+                  <Link to="/" className="btn-primary">Back to Home</Link>
                 </div>
               </Layout>
             }

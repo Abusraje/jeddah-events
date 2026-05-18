@@ -2,7 +2,6 @@ import { useState } from 'react'
 import PostCard from '../components/PostCard'
 import usePosts from '../hooks/usePosts'
 import { createPost } from '../api/posts'
-import { searchUsers } from '../api/profiles'
 import { useAuthContext } from '../context/AuthContext'
 import { getInitials } from '../utils/helpers'
 import { useNavigate } from 'react-router-dom'
@@ -11,12 +10,6 @@ import toast from 'react-hot-toast'
 const TRENDING_TAGS = [
   '#JeddahFood', '#Corniche', '#WeekendVibes', '#JeddahCafe',
   '#HistoricJeddah', '#RedSea', '#JeddahEvents', '#SaudiArt',
-]
-
-const SUGGESTED_USERS = [
-  { id: '1', username: 'jeddah_foodie', full_name: 'Jeddah Foodie', avatar_url: null },
-  { id: '2', username: 'corniche_walks', full_name: 'Corniche Walks', avatar_url: null },
-  { id: '3', username: 'saudi_art_hub', full_name: 'Saudi Art Hub', avatar_url: null },
 ]
 
 export default function SocialPage() {
@@ -59,10 +52,7 @@ export default function SocialPage() {
         <aside className="hidden lg:block space-y-2">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 mb-3">Navigation</h2>
           {[
-            { icon: '🏠', label: 'Feed' },
-            { icon: '🔍', label: 'Explore' },
-            { icon: '🔔', label: 'Notifications' },
-            { icon: '💬', label: 'Messages' },
+            { icon: '🏠', label: 'Feed', onClick: null },
             { icon: '👤', label: 'Profile', onClick: () => user && navigate(`/profile/${user.id}`) },
           ].map(item => (
             <button
@@ -154,27 +144,6 @@ export default function SocialPage() {
 
         {/* Right sidebar */}
         <aside className="hidden lg:block space-y-5">
-          {/* People you may know */}
-          <div className="card p-4">
-            <h3 className="font-semibold text-gray-900 mb-3 text-sm">People You May Know</h3>
-            <div className="space-y-3">
-              {SUGGESTED_USERS.map(u => (
-                <div key={u.id} className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white text-xs font-semibold">
-                    {getInitials(u.full_name)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-gray-900 truncate">{u.full_name}</p>
-                    <p className="text-xs text-gray-400">@{u.username}</p>
-                  </div>
-                  <button className="text-xs text-brand-500 hover:text-brand-600 font-medium shrink-0">
-                    Follow
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Trending */}
           <div className="card p-4">
             <h3 className="font-semibold text-gray-900 mb-3 text-sm">Trending in Jeddah</h3>

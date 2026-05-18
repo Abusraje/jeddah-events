@@ -25,8 +25,8 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await signUp(form.email, form.password, { fullName: form.fullName, username: form.username })
-      toast.success('Account created! Please check your email to verify.')
-      navigate('/login')
+      toast.success('Welcome to JeddahEvents! 🎉')
+      navigate('/')
     } catch (err) {
       toast.error(err.message || 'Registration failed')
     } finally {
@@ -54,10 +54,10 @@ export default function RegisterPage() {
           </p>
           <div className="mt-10 grid grid-cols-2 gap-4">
             {[
-              { emoji: '🎭', stat: '500+', label: 'Events' },
-              { emoji: '☕', stat: '200+', label: 'Cafes' },
-              { emoji: '🎬', stat: 'Live', label: 'Cinema' },
-              { emoji: '👥', stat: '10K+', label: 'Members' },
+              { emoji: '🎭', stat: 'Live', label: 'Events' },
+              { emoji: '☕', stat: 'Jeddah', label: 'Cafes' },
+              { emoji: '🎬', stat: 'Now', label: 'Cinema' },
+              { emoji: '👥', stat: 'Free', label: 'Join' },
             ].map(s => (
               <div key={s.label} className="bg-white/10 rounded-xl p-3 text-center">
                 <div className="text-2xl mb-1">{s.emoji}</div>
