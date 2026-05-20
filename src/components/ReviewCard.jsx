@@ -1,9 +1,12 @@
 import StarRating from './StarRating'
 import { formatDate, getInitials } from '../utils/helpers'
+import { useAuthContext } from '../context/AuthContext'
 
-export default function ReviewCard({ review }) {
+export default function ReviewCard({ review, onDelete }) {
+  const { user } = useAuthContext()
   const profile = review.profiles || {}
   const name = profile.full_name || profile.username || 'Anonymous'
+  const canDelete = user && review.user_id === user.id
 
   return (
     <div className="flex gap-3 py-4">
@@ -15,10 +18,21 @@ export default function ReviewCard({ review }) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-medium text-sm text-gray-900">{name}</span>
-          <span className="text-gray-400 text-xs">·</span>
-          <span className="text-xs text-gray-500">{formatDate(review.created_at)}</span>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-medium text-sm text-gray-900">{name}</span>
+            <span className="text-gray-400 text-xs">·</span>
+            <span className="text-xs text-gray-500">{formatDate(review.created_at)}</span>
+          </div>
+          {canDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete?.(review.id)}
+              className="text-xs text-red-500 hover:text-red-600 shrink-0"
+            >
+              Delete
+            </button>
+          )}
         </div>
         <StarRating value={review.rating} readOnly size="sm" />
         {review.comment && (

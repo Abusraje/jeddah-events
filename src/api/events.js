@@ -170,3 +170,17 @@ export async function addReview(eventId, userId, rating, comment) {
     throw err
   }
 }
+
+export async function deleteReview(reviewId) {
+  try {
+    const { error } = await supabase
+      .from('reviews')
+      .delete()
+      .eq('id', reviewId)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('deleteReview error:', err)
+    throw err
+  }
+}

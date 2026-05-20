@@ -17,7 +17,7 @@ const TRENDING_TAGS = [
 export default function SocialPage() {
   const { user, profile } = useAuthContext()
   const navigate = useNavigate()
-  const { posts, loading, loadingMore, hasMore, loadMore, prependPost, updatePost } = usePosts()
+  const { posts, loading, loadingMore, hasMore, loadMore, prependPost, updatePost, removePost } = usePosts()
 
   const [postContent, setPostContent] = useState('')
   const [postLocation, setPostLocation] = useState('')
@@ -189,7 +189,7 @@ export default function SocialPage() {
           ) : filteredPosts.length > 0 ? (
             <>
               {filteredPosts.map(post => (
-                <PostCard key={post.id} post={post} onUpdate={updatePost} />
+                <PostCard key={post.id} post={post} onUpdate={updatePost} onDelete={removePost} />
               ))}
               {!activeTag && hasMore && (
                 <div className="text-center pt-2">

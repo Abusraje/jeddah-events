@@ -72,7 +72,11 @@ export function usePosts() {
     setPosts((prev) => prev.map((p) => p.id === postId ? updater(p) : p))
   }, [])
 
-  return { posts, loading, loadingMore, hasMore, error, loadMore, prependPost, updatePost }
+  const removePost = useCallback((postId) => {
+    setPosts((prev) => prev.filter((p) => p.id !== postId))
+  }, [])
+
+  return { posts, loading, loadingMore, hasMore, error, loadMore, prependPost, updatePost, removePost }
 }
 
 export default usePosts

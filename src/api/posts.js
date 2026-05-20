@@ -90,3 +90,31 @@ export async function addComment({ postId, userId, content }) {
     throw err
   }
 }
+
+export async function deleteComment(commentId) {
+  try {
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('deleteComment error:', err)
+    throw err
+  }
+}
+
+export async function deletePost(postId) {
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('deletePost error:', err)
+    throw err
+  }
+}

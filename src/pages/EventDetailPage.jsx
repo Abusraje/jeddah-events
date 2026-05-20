@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getEventById, getRelatedEvents, addAttendance, removeAttendance, addReview } from '../api/events'
+import { getEventById, getRelatedEvents, addAttendance, removeAttendance, addReview, deleteReview } from '../api/events'
 import { addFavorite, removeFavorite, getUserAttendance, getUserFavorites } from '../api/profiles'
 import { useAuthContext } from '../context/AuthContext'
 import EventCard from '../components/EventCard'
@@ -93,6 +93,19 @@ export default function EventDetailPage() {
       toast.success('Review submitted!')
     } catch { toast.error('Failed to submit review') }
     finally { setSubmittingReview(false) }
+  }
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await deleteReview(reviewId)
+      setEvent(prev => ({
+        ...prev,
+        reviews: (prev.reviews || []).filter(review => review.id !== reviewId),
+      }))
+      toast.success('Review deleted')
+    } catch {
+      toast.error('Failed to delete review')
+    }
   }
 
   if (loading) {
@@ -194,7 +207,7 @@ export default function EventDetailPage() {
             {event.reviews && event.reviews.length > 0 ? (
               <div className="divide-y divide-gray-100">
                 {event.reviews.map(r => (
-                  <ReviewCard key={r.id} review={r} />
+                  <ReviewCard key={r.id} review={r} onDelete={handleDeleteReview} />
                 ))}
               </div>
             ) : (

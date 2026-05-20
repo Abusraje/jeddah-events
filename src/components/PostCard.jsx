@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { timeAgo, getInitials } from '../utils/helpers'
-import { likePost, unlikePost, getComments, addComment } from '../api/posts'
+import { likePost, unlikePost, getComments, addComment, deleteComment, deletePost } from '../api/posts'
 import { useAuthContext } from '../context/AuthContext'
 import toast from 'react-hot-toast'
 
-export default function PostCard({ post, onUpdate }) {
+export default function PostCard({ post, onUpdate, onDelete }) {
   const { user } = useAuthContext()
   const [showComments, setShowComments] = useState(false)
   const [comments, setComments] = useState([])
@@ -15,10 +15,11 @@ export default function PostCard({ post, onUpdate }) {
   const likes = post.likes || []
   const isLiked = user ? likes.some(l => l.user_id === user.id) : false
   const likeCount = likes.length
-  const commentCount = post.comments?.[0]?.count || 0
+  const commentCount = comments.length > 0 ? comments.length : (post.comments?.[0]?.count || 0)
 
   const profile = post.profiles || {}
   const name = profile.full_name || profile.username || 'Someone'
+  const canDeletePost = user && post.user_id === user.id
 
   const handleLike = async () => {
     if (!user) { toast.error('Sign in to like posts'); return }
@@ -66,6 +67,30 @@ export default function PostCard({ post, onUpdate }) {
     }
   }
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId)
+      setComments(prev => prev.filter(comment => comment.id !== commentId))
+      onUpdate?.(post.id, p => ({
+        ...p,
+        comments: [{ count: Math.max((p.comments?.[0]?.count || 1) - 1, 0) }],
+      }))
+      toast.success('Comment deleted')
+    } catch {
+      toast.error('Failed to delete comment')
+    }
+  }
+
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(post.id)
+      onDelete?.(post.id)
+      toast.success('Post deleted')
+    } catch {
+      toast.error('Failed to delete post')
+    }
+  }
+
   return (
     <div className="card p-4">
       {/* Header */}
@@ -79,6 +104,15 @@ export default function PostCard({ post, onUpdate }) {
           <p className="font-semibold text-sm text-gray-900">{name}</p>
           <p className="text-xs text-gray-400">{timeAgo(post.created_at)}{post.location_tag ? ` · 📍 ${post.location_tag}` : ''}</p>
         </div>
+        {canDeletePost && (
+          <button
+            type="button"
+            onClick={handleDeletePost}
+            className="ml-auto text-xs text-red-500 hover:text-red-600"
+          >
+            Delete
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -131,8 +165,21 @@ export default function PostCard({ post, onUpdate }) {
                     {getInitials(c.profiles?.username || '')}
                   </div>
                   <div className="flex-1 bg-gray-50 rounded-lg px-3 py-2">
-                    <span className="text-xs font-semibold text-gray-700">{c.profiles?.username || 'User'} </span>
-                    <span className="text-xs text-gray-700">{c.content}</span>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="text-xs font-semibold text-gray-700">{c.profiles?.username || 'User'} </span>
+                        <span className="text-xs text-gray-700">{c.content}</span>
+                      </div>
+                      {user && c.user_id === user.id && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteComment(c.id)}
+                          className="text-xs text-red-500 hover:text-red-600 shrink-0"
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
