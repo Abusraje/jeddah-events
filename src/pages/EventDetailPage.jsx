@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getEventById, getRelatedEvents, addAttendance, removeAttendance, addReview } from '../api/events'
-import { addFavorite, removeFavorite, getUserFavorites } from '../api/profiles'
+import { addFavorite, removeFavorite, getUserAttendance, getUserFavorites } from '../api/profiles'
 import { useAuthContext } from '../context/AuthContext'
 import EventCard from '../components/EventCard'
 import ReviewCard from '../components/ReviewCard'
@@ -31,8 +31,15 @@ export default function EventDetailPage() {
       if (data) {
         getRelatedEvents(data.category, data.id).then(setRelated)
         if (user) {
-          const favs = await getUserFavorites(user.id)
+          const [favs, attendance] = await Promise.all([
+            getUserFavorites(user.id),
+            getUserAttendance(user.id),
+          ])
           setFavorited(favs.some(f => f.target_id === id && f.target_type === 'event'))
+          setAttended(attendance.some(a => a.event_id === id))
+        } else {
+          setFavorited(false)
+          setAttended(false)
         }
       }
     })
@@ -65,7 +72,9 @@ export default function EventDetailPage() {
         setAttended(true)
         toast.success('Marked as attending!')
       }
-    } catch { toast.error('Something went wrong') }
+    } catch (err) {
+      toast.error(err.message || 'Something went wrong')
+    }
   }
 
   const handleReviewSubmit = async (e) => {

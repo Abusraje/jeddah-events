@@ -37,9 +37,27 @@ export async function getUserFavorites(userId) {
       .from('favorites')
       .select('*')
       .eq('user_id', userId)
+      .eq('target_type', 'event')
       .order('created_at', { ascending: false })
     if (error) throw error
-    return data || []
+
+    const favorites = data || []
+    if (favorites.length === 0) return []
+
+    const eventIds = favorites.map(favorite => favorite.target_id)
+    const { data: events, error: eventsError } = await supabase
+      .from('events')
+      .select('*')
+      .in('id', eventIds)
+
+    if (eventsError) throw eventsError
+
+    const eventsById = new Map((events || []).map(event => [event.id, event]))
+
+    return favorites.map(favorite => ({
+      ...favorite,
+      events: eventsById.get(favorite.target_id) || null,
+    }))
   } catch (err) {
     console.error('getUserFavorites error:', err)
     return []
@@ -172,6 +190,33 @@ export async function searchUsers(query) {
     return data || []
   } catch (err) {
     console.error('searchUsers error:', err)
+    return []
+  }
+}
+
+export async function getSuggestedFriends(userId, limit = 4) {
+  try {
+    const [profilesResult, followingResult] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('id, username, full_name, avatar_url, bio')
+        .neq('id', userId)
+        .limit(limit + 8),
+      supabase
+        .from('follows')
+        .select('following_id')
+        .eq('follower_id', userId),
+    ])
+
+    if (profilesResult.error) throw profilesResult.error
+    if (followingResult.error) throw followingResult.error
+
+    const followingIds = new Set((followingResult.data || []).map(item => item.following_id))
+    return (profilesResult.data || [])
+      .filter(profile => !followingIds.has(profile.id))
+      .slice(0, limit)
+  } catch (err) {
+    console.error('getSuggestedFriends error:', err)
     return []
   }
 }

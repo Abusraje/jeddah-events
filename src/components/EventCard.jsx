@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { formatDate, formatPrice, getCategoryColor } from '../utils/helpers'
 import { addFavorite, removeFavorite } from '../api/profiles'
@@ -10,6 +10,10 @@ export default function EventCard({ event, isFavorited: initFav = false, compact
   const { user } = useAuthContext()
   const [favorited, setFavorited] = useState(initFav)
   const [imgLoaded, setImgLoaded] = useState(false)
+
+  useEffect(() => {
+    setFavorited(initFav)
+  }, [initFav])
 
   const handleFavorite = async (e) => {
     e.stopPropagation()

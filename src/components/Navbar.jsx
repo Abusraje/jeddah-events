@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { to: '/cafes', label: 'Cafes' },
   { to: '/cinema', label: 'Cinema' },
   { to: '/social', label: 'Social' },
+  { to: '/notifications', label: 'Notifications' },
 ]
 
 export default function Navbar() {
@@ -73,6 +74,18 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2 shrink-0">
+            <NavLink
+              to="/notifications"
+              className={({ isActive }) =>
+                `w-9 h-9 rounded-full flex items-center justify-center text-base transition-colors ${
+                  isActive ? 'bg-brand-50 text-brand-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+                }`
+              }
+              aria-label="Notifications"
+              title="Notifications"
+            >
+              🔔
+            </NavLink>
             {user ? (
               <div className="relative" ref={userMenuRef}>
                 <button

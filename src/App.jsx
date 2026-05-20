@@ -11,6 +11,8 @@ import CafeFinderPage from './pages/CafeFinderPage'
 import CafeDetailPage from './pages/CafeDetailPage'
 import CinemaPage from './pages/CinemaPage'
 import SocialPage from './pages/SocialPage'
+import SocialFeedPage from './pages/SocialFeedPage'
+import NotificationsPage from './pages/NotificationsPage'
 import ProfilePage from './pages/ProfilePage'
 import SubmitEventPage from './pages/SubmitEventPage'
 import LoginPage from './pages/LoginPage'
@@ -94,6 +96,8 @@ export default function App() {
           <Route path="/cafes/:id" element={<Layout><CafeDetailPage /></Layout>} />
           <Route path="/cinema" element={<Layout><CinemaPage /></Layout>} />
           <Route path="/social" element={<Layout><SocialPage /></Layout>} />
+          <Route path="/social/feed" element={<Layout><SocialFeedPage /></Layout>} />
+          <Route path="/notifications" element={<Layout><NotificationsPage /></Layout>} />
           <Route path="/profile/:id" element={<Layout><ProfilePage /></Layout>} />
           <Route
             path="/submit"

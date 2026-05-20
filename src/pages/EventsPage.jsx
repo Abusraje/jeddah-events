@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom'
 import EventCard from '../components/EventCard'
 import FilterSidebar from '../components/FilterSidebar'
 import { getEvents } from '../api/events'
+import { getUserFavorites } from '../api/profiles'
+import { useAuthContext } from '../context/AuthContext'
 
 const SORT_OPTIONS = [
   { value: 'date_asc', label: 'Date (Soonest)' },
@@ -32,11 +34,13 @@ function EventGridSkeleton() {
 }
 
 export default function EventsPage() {
+  const { user } = useAuthContext()
   const [searchParams, setSearchParams] = useSearchParams()
   const [events, setEvents] = useState([])
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+  const [favoriteIds, setFavoriteIds] = useState([])
 
   const filters = {
     category: searchParams.get('category') || '',
@@ -77,6 +81,17 @@ export default function EventsPage() {
       setLoading(false)
     })
   }, [searchParams]) // eslint-disable-line
+
+  useEffect(() => {
+    if (!user) {
+      setFavoriteIds([])
+      return
+    }
+
+    getUserFavorites(user.id).then((favorites) => {
+      setFavoriteIds(favorites.map(favorite => favorite.target_id))
+    })
+  }, [user])
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -150,7 +165,11 @@ export default function EventsPage() {
             <>
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {events.map(event => (
-                  <EventCard key={event.id} event={event} />
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    isFavorited={favoriteIds.includes(event.id)}
+                  />
                 ))}
               </div>
               {/* Pagination */}

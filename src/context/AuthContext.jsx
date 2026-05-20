@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import { supabase } from '../api/supabase'
+import { supabase, assertSupabaseConfigured, isSupabaseConfigured } from '../api/supabase'
 
 const AuthContext = createContext(null)
 
@@ -22,6 +22,11 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      setLoading(false)
+      return
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       const u = session?.user ?? null
       setUser(u)
@@ -41,12 +46,14 @@ export function AuthProvider({ children }) {
   }, [fetchProfile])
 
   const signIn = useCallback(async (email, password) => {
+    assertSupabaseConfigured()
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
     return data
   }, [])
 
   const signUp = useCallback(async (email, password, { fullName, username }) => {
+    assertSupabaseConfigured()
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -60,19 +67,10 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signOut = useCallback(async () => {
+    assertSupabaseConfigured()
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     setProfile(null)
-  }, [])
-
-  const signInWithGoogle = useCallback(async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-      },
-    })
-    if (error) throw error
   }, [])
 
   const updateProfile = useCallback(async (updates) => {
@@ -95,7 +93,6 @@ export function AuthProvider({ children }) {
     signIn,
     signUp,
     signOut,
-    signInWithGoogle,
     updateProfile,
   }
 
